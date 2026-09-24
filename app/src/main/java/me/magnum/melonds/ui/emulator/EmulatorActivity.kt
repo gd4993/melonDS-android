@@ -332,6 +332,9 @@ class EmulatorActivity : AppCompatActivity() {
         binding.viewLayoutControls.apply {
             setFrontendInputHandler(frontendInputHandler)
             setSystemInputHandler(melonTouchHandler)
+            // Gesture fork: pinch to expand a screen, two-finger swipe to swap screens
+            areScreenGesturesEnabled = true
+            onScreenAreasChanged = { updateRendererScreenAreas() }
         }
 
         val layoutChangeListener = View.OnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->

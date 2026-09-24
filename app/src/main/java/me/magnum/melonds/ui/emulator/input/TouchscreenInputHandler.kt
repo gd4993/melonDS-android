@@ -21,7 +21,8 @@ class TouchscreenInputHandler(inputListener: IInputListener) : BaseInputHandler(
             MotionEvent.ACTION_MOVE -> {
                 inputListener.onTouch(normalizeTouchCoordinates(event, v.width, v.height))
             }
-            MotionEvent.ACTION_UP -> {
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                // ACTION_CANCEL is sent when a two-finger screen gesture takes over the touch stream
                 inputListener.onKeyReleased(Input.TOUCHSCREEN)
                 onScreenRelease()
             }

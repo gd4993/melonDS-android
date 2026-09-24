@@ -29,14 +29,17 @@ android {
     compileSdk = AppConfig.compileSdkVersion
     ndkVersion = AppConfig.ndkVersion
     defaultConfig {
-        applicationId = "me.magnum.melonds"
+        // Gesture fork: separate application ID so it installs alongside upstream melonDS
+        applicationId = "me.magnum.melonds.gesture"
         minSdk = AppConfig.minSdkVersion
         targetSdk = AppConfig.targetSdkVersion
         versionCode = AppConfig.versionCode
         versionName = AppConfig.versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
-            abiFilters.addAll(listOf("arm64-v8a", "x86_64"))
+            // Gesture fork: arm64 only (Galaxy Z Fold). Override with -Pmelonds.abis=arm64-v8a,x86_64
+            val abis = (project.findProperty("melonds.abis") as String?)?.split(",")?.map { it.trim() } ?: listOf("arm64-v8a")
+            abiFilters.addAll(abis)
         }
         externalNativeBuild {
             cmake {
@@ -53,7 +56,9 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
+            // Gesture fork: fall back to the local debug key when no release keystore is configured
+            val releaseSigning = signingConfigs.getByName("release")
+            signingConfig = if (releaseSigning.storeFile?.exists() == true) releaseSigning else signingConfigs.getByName("debug")
         }
         getByName("debug") {
             applicationIdSuffix = ".dev"
