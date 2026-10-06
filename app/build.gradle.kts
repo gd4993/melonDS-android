@@ -23,6 +23,14 @@ android {
             keyAlias = props["MELONDS_KEY_ALIAS"] as String? ?: ""
             keyPassword = props["MELONDS_KEY_PASSWORD"] as String? ?: ""
         }
+        // Gesture fork: a fixed debug key checked into the repo, so CI and local builds share one signature and can
+        // update each other in place. It is public, so it is NOT a secret; configure MELONDS_KEYSTORE for a private key.
+        getByName("debug") {
+            storeFile = file("gesture-debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     namespace = "me.magnum.melonds"
